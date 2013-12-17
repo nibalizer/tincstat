@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+// parseUptimeInfo converts the raw uptime command output to an UptimeInfo
+// object. It returns an error if any.
 func parseUptimeInfo(b []byte) (*UptimeInfo, error) {
 	csvReader := csv.NewReader(bytes.NewReader(b))
 	record, err := csvReader.Read()

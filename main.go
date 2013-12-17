@@ -9,7 +9,6 @@ var (
 	outputFile string
 )
 
-
 func main() {
 	http.HandleFunc("/uptime", uptimeServer)
 	err := http.ListenAndServe("0.0.0.0:9000", nil)
