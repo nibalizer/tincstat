@@ -9,9 +9,9 @@ import (
 
 // UptimeInfo represents the system load average as reported by the uptime command.
 type UptimeInfo struct {
-	One  float64 `json:"one_minute"`
-	Five float64 `json:"five_minutes"`
-	Ten  float64 `json:"ten_minutes"`
+	One     float64 `json:"one_minute"`
+	Five    float64 `json:"five_minutes"`
+	Fifteen float64 `json:"fifteen_minutes"`
 }
 
 // uptime executes the uptime command.
@@ -26,7 +26,7 @@ func uptime() ([]byte, error) {
 //   {
 //     "one_minute": 1.0199999809265137,
 //     "five_minutes": 1.2100000381469727,
-//     "ten_minutes": 1.2300000190734863
+//     "fifteen_minutes": 1.2300000190734863
 //   }
 //
 func uptimeServer(w http.ResponseWriter, req *http.Request) {
