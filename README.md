@@ -1,4 +1,4 @@
-"log"# Uptime Server
+# Uptime Server
 
 ## API Usage
 
