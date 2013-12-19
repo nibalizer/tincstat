@@ -1,5 +1,7 @@
 # Uptime Server
 
+[![Build Status](https://travis-ci.org/mkinney/uptime-server.png)](https://travis-ci.org/mkinney/uptime-server)
+
 ## API Usage
 
 ### Uptime
