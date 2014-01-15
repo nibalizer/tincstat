@@ -1,8 +1,6 @@
 package main
 
 import (
-	"bytes"
-	"encoding/csv"
 	"strconv"
 	"strings"
 )
@@ -10,19 +8,17 @@ import (
 // parseUptimeInfo converts the raw uptime command output to an UptimeInfo
 // object. It returns an error if any.
 func parseUptimeInfo(b []byte) (*UptimeInfo, error) {
-	csvReader := csv.NewReader(bytes.NewReader(b))
-	record, err := csvReader.Read()
-	if err != nil {
-		return nil, err
-	}
-	uptimes := strings.Split(strings.Trim(record[3], " "), " ")
-	one, _ := strconv.ParseFloat(uptimes[2], 32)
-	five, _ := strconv.ParseFloat(uptimes[3], 32)
-	ten, _ := strconv.ParseFloat(uptimes[4], 32)
+	s := string(b)
+	// replace commas with spaces, then convert to fields
+	uptimes := strings.Fields(strings.Replace(s, ",", " ", -1))
+
+	one, _ := strconv.ParseFloat(uptimes[len(uptimes)-3], 32)
+	five, _ := strconv.ParseFloat(uptimes[len(uptimes)-2], 32)
+	fifteen, _ := strconv.ParseFloat(uptimes[len(uptimes)-1], 32)
 	ui := &UptimeInfo{
-		One:  one,
-		Five: five,
-		Ten:  ten,
+		One:     one,
+		Five:    five,
+		Fifteen: fifteen,
 	}
 	return ui, nil
 }

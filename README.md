@@ -1,5 +1,7 @@
 # Uptime Server
 
+[![Build Status](https://travis-ci.org/mkinney/uptime-server.png)](https://travis-ci.org/mkinney/uptime-server)
+
 ## API Usage
 
 ### Uptime
@@ -25,6 +27,6 @@ Content-Length: 111
 {
  "one_minute": 1.0199999809265137,
  "five_minutes": 1.2100000381469727,
- "ten_minutes": 1.2300000190734863
+ "fifteen_minutes": 1.2300000190734863
 }
 ```
