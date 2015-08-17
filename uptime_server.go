@@ -22,6 +22,7 @@ type UptimeInfo struct {
 }
 
 // findTincPid finds the process of the 'tincd' daemon
+// TODO: reading the pidfile might be smarter
 func findTincPid() (int, error) {
 
     procs, err := ps.Processes()
