@@ -13,14 +13,6 @@ import (
     "os/exec"
     "syscall"
 )
-
-// UptimeInfo represents the system load average as reported by the uptime command.
-type UptimeInfo struct {
-	One     float64 `json:"one_minute"`
-	Five    float64 `json:"five_minutes"`
-	Fifteen float64 `json:"fifteen_minutes"`
-}
-
 // TincStat represents the status of the tinc daemon
 
 type TincStat struct {
@@ -87,12 +79,6 @@ func list_contains(member string, list []string) bool {
         }
     }
     return false
-}
-
-// uptime executes the uptime command.
-func uptime() ([]byte, error) {
-	cmd := exec.Command("uptime")
-	return cmd.Output()
 }
 
 // user12 kills a process with USR1 then USR2
