@@ -1,10 +1,15 @@
 package main
 
 import (
-	"encoding/json"
-	"io"
-	"net/http"
-	"os/exec"
+    "encoding/json"
+    "io"
+    "net/http"
+    "os/exec"
+    "syscall"
+    "bufio"
+    "fmt"
+    "log"
+    "os"
 )
 
 // UptimeInfo represents the system load average as reported by the uptime command.
@@ -14,10 +19,46 @@ type UptimeInfo struct {
 	Fifteen float64 `json:"fifteen_minutes"`
 }
 
+// readLines reads a whole file into memory
+// and returns a slice of its lines.
+func readLines(path string) ([]string, error) {
+  file, err := os.Open(path)
+  if err != nil {
+    return nil, err
+  }
+  defer file.Close()
+
+  var lines []string
+  scanner := bufio.NewScanner(file)
+  for scanner.Scan() {
+    lines = append(lines, scanner.Text())
+  }
+  return lines, scanner.Err()
+}
+
+// list_contains checks a list for a member
+func list_contains(member string, list []string) bool {
+
+    for _,element := range list {
+        // index is the index where we are
+        // element is the element from someSlice for where we are
+        if element == member {
+            return true
+        }
+    }
+    return false
+}
+
 // uptime executes the uptime command.
 func uptime() ([]byte, error) {
 	cmd := exec.Command("uptime")
 	return cmd.Output()
+}
+
+// user12 kills a process with USR1 then USR2
+func usr12(pid int) () {
+	syscall.Kill(pid, syscall.SIGUSR1)
+	syscall.Kill(pid, syscall.SIGUSR2)
 }
 
 // uptimeServer servers the system load average as reported by the uptime
@@ -30,7 +71,29 @@ func uptime() ([]byte, error) {
 //   }
 //
 func uptimeServer(w http.ResponseWriter, req *http.Request) {
-	output, err := uptime()
+    // Get first list of lines
+    lines1, err := readLines("/var/log/tinc/tinc.log")
+    if err != nil {
+        log.Fatalf("readLines: %s", err)
+    }
+    // Send signals
+    usr12(22899)
+    // Confirm flush of data to file
+    syscall.Sync()
+    // Get second list of lines
+    lines2, err := readLines("/var/log/tinc/tinc.log")
+    if err != nil {
+        log.Fatalf("readLines: %s", err)
+    }
+
+    // Print out unique lines in the second set
+    for i, line := range lines2 {
+        if list_contains(line, lines1) == false {
+            fmt.Println(i, line)
+        }
+    }
+
+    output, err := uptime()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
