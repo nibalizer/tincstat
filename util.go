@@ -22,3 +22,20 @@ func parseUptimeInfo(b []byte) (*UptimeInfo, error) {
 	}
 	return ui, nil
 }
+
+
+// parseTincStat creates an object out of tinc log lines
+func parseTincStat(loglines []string) (*TincStat, error) {
+    // Handle Total Bytes
+    bytes_in_line := strings.Fields(loglines[1])
+    bytes_out_line := strings.Fields(loglines[2])
+
+    totalbytesin, _ := strconv.ParseInt(bytes_in_line[len(bytes_in_line)-1], 10, 64)
+    totalbytesout, _ := strconv.ParseInt(bytes_out_line[len(bytes_out_line)-1], 10, 64)
+
+    ts := &TincStat {
+        TotalBytesIn: totalbytesin,
+        TotalBytesOut: totalbytesout,
+    }
+    return ts, nil
+}

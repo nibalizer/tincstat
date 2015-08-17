@@ -24,17 +24,10 @@ type UptimeInfo struct {
 // TincStat represents the status of the tinc daemon
 
 type TincStat struct {
-    TotalBytesIn int `json:"total_bytes_in"`
-    TotalBytesOut int `json:"total_bytes_out"`
+    TotalBytesIn int64 `json:"total_bytes_in"`
+    TotalBytesOut int64 `json:"total_bytes_out"`
 }
-// parseTincStat creates an object out of tinc log lines
-func parseTincStat(loglines []string) (*TincStat, error) {
-    ts := &TincStat {
-        TotalBytesIn: 15,
-        TotalBytesOut: 1005,
-    }
-    return ts, nil
-}
+
 
 // findTincPid finds the process of the 'tincd' daemon
 // TODO: reading the pidfile might be smarter
