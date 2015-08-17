@@ -21,6 +21,21 @@ type UptimeInfo struct {
 	Fifteen float64 `json:"fifteen_minutes"`
 }
 
+// TincStat represents the status of the tinc daemon
+
+type TincStat struct {
+    TotalBytesIn int `json:"total_bytes_in"`
+    TotalBytesOut int `json:"total_bytes_out"`
+}
+// parseTincStat creates an object out of tinc log lines
+func parseTincStat(loglines []string) (*TincStat, error) {
+    ts := &TincStat {
+        TotalBytesIn: 15,
+        TotalBytesOut: 1005,
+    }
+    return ts, nil
+}
+
 // findTincPid finds the process of the 'tincd' daemon
 // TODO: reading the pidfile might be smarter
 func findTincPid() (int, error) {
@@ -85,6 +100,7 @@ func usr12(pid int) () {
 	syscall.Kill(pid, syscall.SIGUSR2)
 }
 
+
 // uptimeServer servers the system load average as reported by the uptime
 // command. It returns the system uptime in the following format:
 //
@@ -116,35 +132,56 @@ func uptimeServer(w http.ResponseWriter, req *http.Request) {
         log.Fatalf("readLines: %s", err)
     }
 
-    // Print out unique lines in the second set
+    // Print out and save unique lines in the second set
+    var loglines []string
     for i, line := range lines2 {
         if list_contains(line, lines1) == false {
             fmt.Println(i, line)
+            loglines = append(loglines, line)
         }
     }
 
-    output, err := uptime()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
 
-	// Convert the raw uptime output to an UptimeInfo object.
-	ui, err := parseUptimeInfo(output)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+    // Convert the raw loglines output to a tincstat object
+    ts, err := parseTincStat(loglines)
+    if err != nil {
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+    }
 
-	// Create the JSON representation of the system uptime.
-	data, err := json.MarshalIndent(ui, " ", "")
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
 
-	// Write the HTTP response headers and body.
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	io.WriteString(w, string(data))
+    // Create the JSON representation of tinc status
+    data, err := json.MarshalIndent(ts, " ", "")
+    if err != nil {
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+    }
+
+
+    // Old Uptime Code
+    // Ignore
+//    output, err := uptime()
+ //   if err != nil {
+  //      w.WriteHeader(http.StatusInternalServerError)
+  //      return
+  //  }
+
+    // Convert the raw uptime output to an UptimeInfo object.
+   // ui, err := parseUptimeInfo(output)
+   // if err != nil {
+   //     w.WriteHeader(http.StatusInternalServerError)
+  //      return
+  //  }
+
+    // Create the JSON representation of the system uptime.
+   // data, err := json.MarshalIndent(ui, " ", "")
+   // if err != nil {
+   //     w.WriteHeader(http.StatusInternalServerError)
+   //     return
+  //  }
+
+    // Write the HTTP response headers and body.
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+    io.WriteString(w, string(data))
 }
