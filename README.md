@@ -23,7 +23,15 @@ Date: Tue, 17 Dec 2013 00:57:36 GMT
 Content-Length: 111
 
 {
- "total_bytes_in": 15,
- "total_bytes_out": 1005
+  "total_bytes_in": 115324,
+  "total_bytes_out": 67990,
+  "connections": [
+    {
+      "name": "spencer_telescope",
+      "ip": "131.252.216.15",
+      "port": 4545
+    }
+  ]
 }
+
 ```
