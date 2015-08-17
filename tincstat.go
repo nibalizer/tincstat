@@ -26,7 +26,15 @@ type UptimeInfo struct {
 type TincStat struct {
     TotalBytesIn int64 `json:"total_bytes_in"`
     TotalBytesOut int64 `json:"total_bytes_out"`
+    Connections []TincConnection `json:"connections"`
 }
+
+type TincConnection struct {
+    Name string `json:"name"`
+    Ip string `json:"ip"`
+    Port int64 `json:"port"`
+}
+
 
 
 // findTincPid finds the process of the 'tincd' daemon
