@@ -1,15 +1,17 @@
 package main
 
 import (
+    "bufio"
     "encoding/json"
+    "errors"
+    "fmt"
+    "github.com/mitchellh/go-ps"
     "io"
+    "log"
     "net/http"
+    "os"
     "os/exec"
     "syscall"
-    "bufio"
-    "fmt"
-    "log"
-    "os"
 )
 
 // UptimeInfo represents the system load average as reported by the uptime command.
@@ -17,6 +19,27 @@ type UptimeInfo struct {
 	One     float64 `json:"one_minute"`
 	Five    float64 `json:"five_minutes"`
 	Fifteen float64 `json:"fifteen_minutes"`
+}
+
+// findTincPid finds the process of the 'tincd' daemon
+func findTincPid() (int, error) {
+
+    procs, err := ps.Processes()
+    if err != nil {
+        log.Fatalf("findTincPid: %s", err)
+    }
+
+    for _, proc := range procs {
+
+        if proc.Executable() == "tincd" {
+            //fmt.Println("pid: ", proc.Pid())
+            //fmt.Println("ppid: ", proc.PPid())
+            //fmt.Println("name: ", proc.Executable())
+            //fmt.Println("raw: ", proc)
+            return proc.Pid(), err
+        }
+    }
+    return 0, errors.New("findTincPid: Pid not found, is tinc running?")
 }
 
 // readLines reads a whole file into memory
@@ -71,13 +94,19 @@ func usr12(pid int) () {
 //   }
 //
 func uptimeServer(w http.ResponseWriter, req *http.Request) {
+    // Get tinc pid
+    tincPid, err := findTincPid()
+    if err != nil {
+        log.Fatalf("findTincPid: %s", err)
+    }
+
     // Get first list of lines
     lines1, err := readLines("/var/log/tinc/tinc.log")
     if err != nil {
         log.Fatalf("readLines: %s", err)
     }
     // Send signals
-    usr12(22899)
+    usr12(tincPid)
     // Confirm flush of data to file
     syscall.Sync()
     // Get second list of lines
