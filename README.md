@@ -27,9 +27,9 @@ Content-Length: 111
   "total_bytes_out": 67990,
   "connections": [
     {
-      "name": "spencer_telescope",
-      "ip": "131.252.216.15",
-      "port": 4545
+      "name": "some_random_node",
+      "ip": "192.0.2.15",
+      "port": 2003
     }
   ]
 }
