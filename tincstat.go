@@ -102,15 +102,21 @@ func usr12(pid int) () {
 }
 
 
-// uptimeServer servers the system load average as reported by the uptime
-// command. It returns the system uptime in the following format:
+// tincStatServer serves data pulled from the tinc log file
+// Tinc logs connection and network information after getting a USR1 and USR2
+// The following output is current:
 //
-//   {
-//     "one_minute": 1.0199999809265137,
-//     "five_minutes": 1.2100000381469727,
-//     "fifteen_minutes": 1.2300000190734863
-//   }
-//
+//{
+//  "total_bytes_in": 115324,
+//  "total_bytes_out": 67990,
+//  "connections": [
+//    {
+//      "name": "some_random_node",
+//      "ip": "192.0.2.15",
+//      "port": 2003
+//    }
+//  ]
+//}
 func tincStatServer(w http.ResponseWriter, req *http.Request) {
     // Get tinc pid
     tincPid, err := findTincPid()
