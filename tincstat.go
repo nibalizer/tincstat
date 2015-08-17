@@ -110,7 +110,7 @@ func usr12(pid int) () {
 //     "fifteen_minutes": 1.2300000190734863
 //   }
 //
-func uptimeServer(w http.ResponseWriter, req *http.Request) {
+func tincStatServer(w http.ResponseWriter, req *http.Request) {
     // Get tinc pid
     tincPid, err := findTincPid()
     if err != nil {
