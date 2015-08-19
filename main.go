@@ -11,7 +11,7 @@ var (
 
 func main() {
 	http.HandleFunc("/tincstat", tincStatServer)
-	err := http.ListenAndServe("0.0.0.0:9000", nil)
+	err := http.ListenAndServe("127.0.0.1:9000", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: " + err.Error())
 	}
