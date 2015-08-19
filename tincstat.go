@@ -10,7 +10,6 @@ import (
     "log"
     "net/http"
     "os"
-    "os/exec"
     "syscall"
 )
 // TincStat represents the status of the tinc daemon
